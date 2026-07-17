@@ -46,7 +46,7 @@ public function index()
         $request->validate([
             'categoria_id' => 'required|integer|exists:categorias,id',
             'nombre' => 'required|string|max:100',
-            'precio' => 'required|numeric',
+            'precio_venta' => 'required|numeric',
             'stock' => 'required|integer',
         ]);
         $producto->update($request->all());
