@@ -17,26 +17,52 @@ class IngresoController extends Controller
 
     public function store(Request $request)
     {
+            $request->validate([
+            'proveedor_id' => 'required|integer|exists:proveedores,id',
+            'fecha' => 'required|date',
+            'total' => 'required|numeric',
+        ]);
+
         $ingreso = Ingreso::create($request->all());
         return response()->json($ingreso, 201);
     }
 
     public function show(string $id)
     {
-        $ingreso = Ingreso::with(['proveedor', 'detalles.producto'])->findOrFail($id);
+        $ingreso = Ingreso::with(['proveedor', 'detalles.producto'])->find($id);
+
+        if (!$ingreso) {
+            return response()->json(['message' => 'Ingreso no encontrado'], 404);
+        }
+
         return response()->json($ingreso, 200);
     }
 
     public function update(Request $request, string $id)
     {
-        $ingreso = Ingreso::findOrFail($id);
+        $ingreso = Ingreso::find($id);
+
+        if (!$ingreso) {
+            return response()->json(['message' => 'Ingreso no encontrado'], 404);
+        }
+
+        $request->validate([
+            'proveedor_id' => 'required|integer|exists:proveedores,id',
+            'fecha' => 'required|date',
+            'total' => 'required|numeric',
+        ]);
+
         $ingreso->update($request->all());
         return response()->json($ingreso, 200);
     }
 
     public function destroy(string $id)
     {
-        $ingreso = Ingreso::findOrFail($id);
+        $ingreso = Ingreso::find($id);
+        if (!$ingreso) {
+            return response()->json(['message' => 'Ingreso no encontrado'], 404);
+        }
+
         $ingreso->delete();
         return response()->json(['mensaje' => 'Ingreso eliminado correctamente'], 200);
     }
